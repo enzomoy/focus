@@ -1,0 +1,8 @@
+# Generate a classic gitignore for nodejs api project
+
+.env
+node_modules
+dist
+.vscode
+.idea
+```
