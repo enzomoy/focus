@@ -13,7 +13,7 @@ Focus est une application de gestion de temps basée sur la technique Pomodoro. 
 
 1. Clonez ce dépôt sur votre machine :
    ```
-   git clone https://github.com/votre-utilisateur/focus.git
+   git clone https://github.com/enzomoy/focus.git
    ```
 2. Installez les dépendances nécessaires :
    ```
