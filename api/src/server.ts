@@ -13,6 +13,10 @@ app.get('/', (req: Request, res: Response) => {
   res.status(200).json({"Message": "Welcome to the API"})
 });
 
+// Routes
+const authRoutes = require('./routes/auth');
+app.use('/api/auth', authRoutes);
+
 // Connect to the database
 sequelize.sync().then(() => {
   console.log('La connexion à la base de données a été établie avec succès.');
