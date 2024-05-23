@@ -1,3 +1,5 @@
+import {BadRequestError, InternalServerError} from "../utils/CustomError";
+const jwt = require('jsonwebtoken');
 const authRepository = require('../repositories/auth');
 import crypto from 'crypto';
 
@@ -7,17 +9,17 @@ class authService {
         // Check if the user already exists
         const potentialUserEmail = await authRepository.findByEmail(data.email);
         if (potentialUserEmail) {
-            throw new Error("L'utilisateur existe déjà");
+            throw new BadRequestError("L'adresse email existe déjà")
         }
         const potentialUserUsername = await authRepository.findByUsername(data.username);
         if (potentialUserUsername) {
-            throw new Error("Le nom d'utilisateur existe déjà");
+            throw new BadRequestError("Le nom d'utilisateur existe déjà")
         }
 
         // Hash the password
         const { salt, hashedPassword } = this.hashPassword(data.password);
         if (!salt || !hashedPassword) {
-            throw new Error("Erreur lors du hashage du mot de passe");
+            throw new BadRequestError("Erreur lors du hashage du mot de passe");
         }
         data.salt = salt;
         data.password = hashedPassword;
@@ -29,15 +31,51 @@ class authService {
         // Save the user in the database
         const user = await authRepository.signup(data);
         if (!user) {
-            throw new Error("Erreur lors de la création de l'utilisateur dans la base de données");
+            throw new InternalServerError("Erreur lors de la création de l'utilisateur dans la base de données");
         }
         return user;
+    }
+
+    static async login(data: LoginData): Promise<string> {
+        // Check if the user exists
+        const user: User = await authRepository.findByEmail(data.email);
+        if (!user) {
+            throw new BadRequestError("Email ou mot de passe incorrect");
+        }
+
+        // Hash & test the password
+        const hashedPassword = this.decryptPassword(data.password, user.salt);
+        if (hashedPassword !== user.password) {
+            throw new BadRequestError("Email ou mot de passe incorrect");
+        }
+
+        // Generate a token
+        const token = this.generateJWT(user);
+        if (!token) {
+            throw new InternalServerError("Erreur lors de la génération du token");
+        }
+        return token;
     }
 
     private static hashPassword(password: string): { salt: string, hashedPassword: string } {
         const salt: string = crypto.randomBytes(16).toString('hex');
         const hashedPassword: string = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
         return { salt, hashedPassword }
+    }
+
+    private static decryptPassword(password: string, salt: string): string {
+        return crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+    }
+
+    private static generateJWT(user: User): string {
+        const data = {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            first_name: user.first_name,
+            last_name: user.last_name,
+        }
+        return jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '604800s' });
     }
 }
 

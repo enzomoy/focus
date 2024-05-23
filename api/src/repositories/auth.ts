@@ -18,8 +18,6 @@ class authRepository {
         }
     }
 
-
-
     static async signup(user: User): Promise<any>{
         try {
             return await UserModel.create(user);
