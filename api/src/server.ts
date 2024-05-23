@@ -1,17 +1,28 @@
 import express from 'express';
 const app = express();
 const sequelize = require('./config/db');
+const cookieParser = require('cookie-parser');
 import { Request, Response } from 'express';
+import {errorHandler} from "./middlewares/errorHandler";
 
 // Middleware to parse incoming requests
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 const port: string | 3000 = process.env.PORT || 3000;
 
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({"Message": "Welcome to the API"})
 });
+
+// Routes
+const authRoutes = require('./routes/auth');
+app.use('/api/auth', authRoutes);
+
+
+// Error handling middleware
+app.use(errorHandler);
 
 // Connect to the database
 sequelize.sync().then(() => {

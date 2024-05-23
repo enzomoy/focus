@@ -20,6 +20,10 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    salt: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     first_name: {
         type: DataTypes.STRING,
         allowNull: false
@@ -36,11 +40,11 @@ const User = sequelize.define('User', {
         type: DataTypes.DATE,
         allowNull: true
     },
-    created_at: {
+    createdAt: {
         type: DataTypes.DATE,
         allowNull: false
     },
-    updated_at: {
+    updatedAt: {
         type: DataTypes.DATE,
         allowNull: false
     }
@@ -48,3 +52,5 @@ const User = sequelize.define('User', {
     tableName: 'user',
     timestamps: false
 });
+
+module.exports = User;
