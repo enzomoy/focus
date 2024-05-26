@@ -1,13 +1,35 @@
-import { Request, Response} from "express";
+import {NextFunction, Request, Response} from "express";
+import {User} from "../typescript/User";
+const userServices = require('../services/user')
 
 class userController {
-    static async profile(req: Request, res: Response): Promise<void> {
 
+    static async getUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const users: User[] = await userServices.getUsers();
+            res.status(200).json(users)
+        } catch (error) {
+            next(error)
+        }
     }
 
-    static async delete(req: Request, res: Response): Promise<void> {
-        // Pour supprimer son compte il faut être admin / que ce soit son propre compte
-        // Vérifié par le middleware isMe
+    static async getUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const id: string = req.params.id;
+        try {
+            const user: User = await userServices.getUser(id);
+            res.status(200).json(user)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    static async profile(req: Request, res: Response): Promise<void> {
+        // TODO: Récupérer les informations de l'utilisateur connecté
+    }
+
+    static async delete(req: Request, res: Response): Promise<void>
+    {
+        // TODO: Supprimer un utilisateur
     }
 }
 

@@ -1,9 +1,11 @@
-const authAuthMiddleware = require('../middlewares/authMiddleware');
-const authExpress = require('express');
-const router = authExpress.Router();
+const authMiddleware = require('../middlewares/authMiddleware');
+const express = require('express');
+const router = express.Router();
 const userController = require('../controllers/user');
 
-router.get('/profile', [authAuthMiddleware, userController.profile]);
-router.delete('/delete', [authAuthMiddleware, userController.delete]);
+router.get('/', [authMiddleware, userController.getUsers]);
+router.get('/:id', [authMiddleware, userController.getUser]);
+router.get('/profile', [authMiddleware, userController.profile]);
+router.delete('/delete', [authMiddleware, userController.delete]);
 
 module.exports = router;
