@@ -30,7 +30,15 @@ class userService {
         return this.removeSensitiveData(user);
     }
 
-    // TODO : Fonction qui retire les données sensibles de l'utilisateur avant de le renvoyer
+    static async removeUser(id: number) {
+        const user: User = await userRepository.getUserById(id);
+        if (!user) {
+            throw new NotFoundError("Utilisateur non trouvé");
+        }
+
+        await userRepository.removeUser(id);
+    }
+
     static removeSensitiveData(user: User): SafeUser {
         return {
             id: user.id,
@@ -45,6 +53,7 @@ class userService {
             updatedAt: user.updatedAt
         }
     }
+
 }
 
 module.exports = userService;

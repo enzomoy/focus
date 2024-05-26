@@ -32,9 +32,14 @@ class userController {
         }
     }
 
-    static async delete(req: Request, res: Response): Promise<void>
-    {
-        // TODO: Supprimer un utilisateur
+    static async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const id = req.params.id
+        try {
+            await userServices.removeUser(id)
+            res.status(200).json({message: "Utilisateur supprimé"})
+        } catch (error) {
+            next(error)
+        }
     }
 }
 

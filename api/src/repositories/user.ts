@@ -41,6 +41,14 @@ class userRepository {
             return error;
         }
     }
+
+    static async removeUser(id: number): Promise<any>{
+        try {
+            return await UserModel.destroy({ where: { id: id } });
+        } catch (error) {
+            return error;
+        }
+    }
 }
 
 module.exports = userRepository;

@@ -6,6 +6,8 @@ const userController = require('../controllers/user');
 router.get('/profile', [authMiddleware, userController.profile]);
 router.get('/', [authMiddleware, userController.getUsers]);
 router.get('/:id', [authMiddleware, userController.getUser]);
-router.delete('/delete', [authMiddleware, userController.delete]);
+
+// TODO : Ajouter le middleware de vérification de l'utilisateur (pour supprimer uniquement son propre compte & les admins)
+router.delete('/:id', [authMiddleware, userController.delete]);
 
 module.exports = router;
