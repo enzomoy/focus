@@ -1,12 +1,10 @@
-// User type
+// SafeUser type
 
-export type User = {
+export type SafeUser = {
     id?: number;
     username: string;
     email: string;
-    password: string;
     role: string;
-    salt: string;
     first_name: string;
     last_name: string;
     profile_picture?: string;

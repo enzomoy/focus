@@ -23,8 +23,13 @@ class userController {
         }
     }
 
-    static async profile(req: Request, res: Response): Promise<void> {
-        // TODO: Récupérer les informations de l'utilisateur connecté
+    static async profile(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const user: User = await userServices.getUser(req.user.id);
+            res.status(200).json(user)
+        } catch (error) {
+            next(error)
+        }
     }
 
     static async delete(req: Request, res: Response): Promise<void>
