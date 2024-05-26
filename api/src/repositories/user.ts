@@ -1,7 +1,7 @@
 const UserModel = require('../models/user');
+import {User} from "../typescript/User";
 
-class authRepository {
-
+class userRepository {
     static async findByEmail(email: string): Promise<any>{
         try {
             return await UserModel.findOne({ where: { email: email } });
@@ -25,6 +25,22 @@ class authRepository {
             return error;
         }
     }
+
+    static async getUsers(): Promise<any>{
+        try {
+            return await UserModel.findAll();
+        } catch (error) {
+            return error;
+        }
+    }
+
+    static async getUserById(id: number): Promise<any>{
+        try {
+            return await UserModel.findByPk(id);
+        } catch (error) {
+            return error;
+        }
+    }
 }
 
-module.exports = authRepository;
+module.exports = userRepository;

@@ -1,17 +1,19 @@
 import {BadRequestError, InternalServerError} from "../utils/CustomError";
 const jwt = require('jsonwebtoken');
-const authRepository = require('../repositories/auth');
+const userRepository = require('../repositories/user');
+import {User} from "../typescript/User";
+import {LoginData} from "../typescript/LoginData";
 import crypto from 'crypto';
 
 class authService {
     static async signup(data: User): Promise<User> {
 
         // Check if the user already exists
-        const potentialUserEmail = await authRepository.findByEmail(data.email);
+        const potentialUserEmail = await userRepository.findByEmail(data.email);
         if (potentialUserEmail) {
             throw new BadRequestError("L'adresse email existe déjà")
         }
-        const potentialUserUsername = await authRepository.findByUsername(data.username);
+        const potentialUserUsername = await userRepository.findByUsername(data.username);
         if (potentialUserUsername) {
             throw new BadRequestError("Le nom d'utilisateur existe déjà")
         }
@@ -29,7 +31,7 @@ class authService {
         data.createdAt = new Date().toISOString();
 
         // Save the user in the database
-        const user = await authRepository.signup(data);
+        const user = await userRepository.signup(data);
         if (!user) {
             throw new InternalServerError("Erreur lors de la création de l'utilisateur dans la base de données");
         }
@@ -38,7 +40,7 @@ class authService {
 
     static async login(data: LoginData): Promise<string> {
         // Check if the user exists
-        const user: User = await authRepository.findByEmail(data.email);
+        const user: User = await userRepository.findByEmail(data.email);
         if (!user) {
             throw new BadRequestError("Email ou mot de passe incorrect");
         }
@@ -72,6 +74,7 @@ class authService {
             id: user.id,
             username: user.username,
             email: user.email,
+            role: user.role,
             first_name: user.first_name,
             last_name: user.last_name,
         }

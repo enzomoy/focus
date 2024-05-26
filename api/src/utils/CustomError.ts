@@ -39,3 +39,9 @@ export class InternalServerError extends CustomError {
         super(message, 500);
     }
 }
+
+export class NoContentError extends CustomError {
+    constructor(message = 'No Content') {
+        super(message, 204);
+    }
+}

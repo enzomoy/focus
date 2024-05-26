@@ -20,6 +20,9 @@ app.get('/', (req: Request, res: Response) => {
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
+const userRoutes = require('./routes/user');
+app.use('/api/user', userRoutes);
+
 
 // Error handling middleware
 app.use(errorHandler);
