@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export default class User {
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,7 +19,7 @@ export default class User {
 
   @Column({
     type: 'timestamp',
-    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
   })
   last_login: Date;
 
@@ -39,3 +39,15 @@ export default class User {
   })
   updated_at: Date;
 }
+
+export type UserModel = {
+  id: number;
+  username: string;
+  email: string;
+  password: string;
+  salt: string;
+  last_login: Date;
+  is_active: boolean;
+  created_at: Date;
+  updated_at: Date;
+};
