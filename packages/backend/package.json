@@ -1,5 +1,5 @@
 {
-  "name": "backend",
+  "name": "@focus/backend",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -25,6 +25,8 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/platform-express": "^10.0.0",
+    "cookie-parser": "^1.4.6",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
