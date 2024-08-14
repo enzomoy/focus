@@ -4,7 +4,17 @@ import {
   Register,
   registerSchema,
 } from '@common/validations/auth-schema';
-import { Body, Controller, HttpCode, Post, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+  UsePipes,
+} from '@nestjs/common';
+import { Response } from 'express'; // Add this line
 import { ZodValidationPipe } from 'src/pipes/zod.pipe';
 import { AuthService } from './auth.service';
 
@@ -14,14 +24,38 @@ export class AuthController {
 
   @Post('register')
   @UsePipes(new ZodValidationPipe(registerSchema))
-  register(@Body() data: Register) {
-    return this.authService.register(data);
+  async register(
+    @Body() data: Register,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.register(data);
+    res.cookie('focus_token', result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+
+    return result;
   }
 
   @Post('login')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @UsePipes(new ZodValidationPipe(loginSchema))
-  login(@Body() data: Login) {
-    return this.authService.login(data);
+  async login(@Body() data: Login, @Res({ passthrough: true }) res: Response) {
+    const result = await this.authService.login(data);
+    res.cookie('focus_token', result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+
+    return result;
+  }
+
+  @Get('logout')
+  @HttpCode(HttpStatus.OK)
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('focus_token');
+    return { success: true, message: 'User logged out successfully' };
   }
 }

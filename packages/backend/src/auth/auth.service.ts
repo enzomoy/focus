@@ -40,7 +40,17 @@ export class AuthService {
 
     await this.userRepository.save(user);
 
-    return user;
+    const token = this.generateJwtToken({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+    });
+
+    return {
+      success: true,
+      message: 'User registered successfully',
+      token,
+    };
   }
 
   async login(data: Login) {
