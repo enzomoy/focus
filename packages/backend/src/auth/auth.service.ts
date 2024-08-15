@@ -68,6 +68,8 @@ export class AuthService {
       throw new BadRequestError('Invalid email or password');
     }
 
+    this.setLastLogin(user);
+
     const token = this.generateJwtToken({
       id: user.id,
       username: user.username,
@@ -95,5 +97,10 @@ export class AuthService {
     return sign(payload, process.env.JWT_SECRET, {
       expiresIn: '7d',
     });
+  }
+
+  private setLastLogin(user: User) {
+    user.last_login = new Date();
+    this.userRepository.save(user);
   }
 }
