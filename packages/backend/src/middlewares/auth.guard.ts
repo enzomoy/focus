@@ -13,13 +13,13 @@ export class AuthGuard {
       const token = req.cookies.focus_token;
 
       if (!token) {
-        throw new UnauthorizedError('Invalid or missing token');
+        return false;
       }
 
       const decoded = verify(token, this.secret);
 
       if (!decoded) {
-        throw new UnauthorizedError('Invalid or missing token');
+        return false;
       }
 
       req.user = decoded as JwtPayload;
