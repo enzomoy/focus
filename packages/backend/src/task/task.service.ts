@@ -1,3 +1,4 @@
+import { NotFoundError, UnauthorizedError } from '@common/errors/CustomError';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from 'src/models/Task';
@@ -19,7 +20,7 @@ export class TaskService {
 
     if (tasks.length === 0) {
       return {
-        success: false,
+        success: true,
         message: 'No tasks found',
       };
     }
@@ -56,17 +57,11 @@ export class TaskService {
     });
 
     if (!task) {
-      return {
-        success: false,
-        message: 'Task not found',
-      };
+      throw new NotFoundError('Task not found');
     }
 
     if (task.user.id !== userId) {
-      return {
-        success: false,
-        message: 'You are not authorized to update this task',
-      };
+      throw new UnauthorizedError('You are not authorized to update this task');
     }
 
     task.name = name;
@@ -89,17 +84,11 @@ export class TaskService {
     });
 
     if (!task) {
-      return {
-        success: false,
-        message: 'Task not found',
-      };
+      throw new NotFoundError('Task not found');
     }
 
     if (task.user.id !== userId) {
-      return {
-        success: false,
-        message: 'You are not authorized to update this task',
-      };
+      throw new UnauthorizedError('You are not authorized to update this task');
     }
 
     if (task.status === 'pending') {
