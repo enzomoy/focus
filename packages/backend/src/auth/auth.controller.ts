@@ -58,4 +58,9 @@ export class AuthController {
     res.clearCookie('focus_token');
     return { success: true, message: 'User logged out successfully' };
   }
+
+  @Post('request-password-reset')
+  async requestPasswordReset(@Body() data: { email: string }) {
+    return this.authService.requestPasswordReset(data.email);
+  }
 }

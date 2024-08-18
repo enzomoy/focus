@@ -1,3 +1,4 @@
+import { EditUserSchema } from '@common/validations/user-schema';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/models/User';
@@ -13,6 +14,7 @@ export class UserService {
   async getUser(id: number) {
     const user = await this.userRepository.findOne({
       where: [{ id }],
+      select: ['id', 'username', 'email', 'is_active'],
     });
 
     if (!user) {
@@ -28,21 +30,30 @@ export class UserService {
     };
   }
 
-  async getAllUsers() {
-    const users = await this.userRepository.find({
-      select: ['id', 'username', 'email', 'is_active'],
+  async updateUser(id: number, data: EditUserSchema) {
+    const user = await this.userRepository.findOne({
+      where: [{ id }],
     });
 
-    if (users.length === 0) {
+    if (!user) {
       return {
         success: false,
-        message: 'No users found',
+        message: 'User not found',
       };
     }
 
+    if (!data.username && !data.email) {
+      return {
+        success: false,
+        message: 'No data to update',
+      };
+    }
+
+    await this.userRepository.update({ id }, data);
+
     return {
       success: true,
-      users,
+      message: 'User updated successfully',
     };
   }
 }

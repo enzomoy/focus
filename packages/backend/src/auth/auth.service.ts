@@ -83,6 +83,18 @@ export class AuthService {
     };
   }
 
+  async requestPasswordReset(email: string) {
+    if (!email) {
+      throw new BadRequestError('Email is required');
+    }
+
+    // Create the logic to send a password reset email
+    return {
+      success: true,
+      message: `Password reset email sent to ${email}`,
+    };
+  }
+
   private generateSalt() {
     return crypto.randomBytes(16).toString('hex');
   }
