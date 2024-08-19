@@ -1,6 +1,4 @@
 import {
-  changePasswordSchema,
-  ChangePasswordSchema,
   editUserSchema,
   EditUserSchema,
 } from '@common/validations/user-schema';
