@@ -18,6 +18,10 @@ import { Response } from 'express';
 import { MailerService } from 'src/mailer/mailer.service';
 import { ZodValidationPipe } from 'src/pipes/zod.pipe';
 import { AuthService } from './auth.service';
+import {
+  ValidateResetTokenSchema,
+  validateResetTokenSchema,
+} from '@common/validations/resetpwd-schema';
 
 @Controller()
 export class AuthController {
@@ -71,5 +75,11 @@ export class AuthController {
   @Post('validate-reset-token')
   async validateResetToken(@Body('token') token: string) {
     return this.authService.validateResetToken(token);
+  }
+
+  @Post('reset-password')
+  @UsePipes(new ZodValidationPipe(validateResetTokenSchema))
+  async resetPassword(@Body() data: ValidateResetTokenSchema) {
+    return this.authService.resetPassword(data);
   }
 }

@@ -1,17 +1,21 @@
 import { BadRequestError } from '@common/errors/CustomError';
 import { Login, Register } from '@common/validations/auth-schema';
+import { ValidateResetTokenSchema } from '@common/validations/resetpwd-schema';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 import { User } from 'src/models/User';
 import { Repository } from 'typeorm';
-import { verify } from 'jsonwebtoken';
 
 type JwtPayload = {
   id: number;
   username: string;
   email: string;
+};
+
+type JwtResetPasswordPayload = {
+  tokenEmail: string;
 };
 
 @Injectable()
@@ -97,6 +101,39 @@ export class AuthService {
         isValid: false,
       };
     }
+  }
+
+  async resetPassword(data: ValidateResetTokenSchema) {
+    // Verify token
+    const payload = verify(
+      data.token,
+      process.env.JWT_SECRET,
+    ) as JwtResetPasswordPayload;
+
+    if (!payload.tokenEmail) {
+      throw new BadRequestError('Invalid token');
+    }
+
+    // Edit user password
+    const user = await this.userRepository.findOne({
+      where: { email: payload.tokenEmail },
+    });
+
+    if (!user) {
+      throw new BadRequestError('Invalid token');
+    }
+
+    const salt = this.generateSalt();
+
+    user.salt = salt;
+    user.password = this.hashPassword(data.password, salt);
+
+    await this.userRepository.save(user);
+
+    return {
+      success: true,
+      message: 'Password reset successfully',
+    };
   }
 
   private generateSalt() {

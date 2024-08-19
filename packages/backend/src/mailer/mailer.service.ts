@@ -47,7 +47,7 @@ export class MailerService {
   private generateToken(email: string): string {
     return sign(
       {
-        email,
+        tokenEmail: email,
       },
       this.secret,
       {

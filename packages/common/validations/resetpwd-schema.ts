@@ -5,20 +5,39 @@ export const resetPwdSchema = z.object({
     .string({
       message: 'Password must be a string',
     })
-    .min(6, {
-      message: 'Password must be at least 6 characters long',
+    .min(8, {
+      message: 'Password must be at least 8 characters long',
     })
-    .max(50, {
-      message: 'Password must be at most 50 characters long',
+    .max(256, {
+      message: 'Password must be at most 256 characters long',
     }),
   confirmPassword: z
     .string({
       message: 'Confirm password must be a string',
     })
-    .min(6, {
-      message: 'Confirm password must be at least 6 characters long',
+    .min(8, {
+      message: 'Confirm password must be at least 8 characters long',
     })
-    .max(50, {
-      message: 'Confirm password must be at most 50 characters long',
+    .max(256, {
+      message: 'Confirm password must be at most 256 characters long',
     }),
 });
+
+export type ResetPwdSchema = z.infer<typeof resetPwdSchema>;
+
+export const validateResetTokenSchema = z.object({
+  token: z.string({
+    message: 'Token must be a string',
+  }),
+  password: z.string({
+    message: 'Password must be a string',
+  })
+  .min(8, {
+    message: 'Password must be at least 8 characters long',
+  })
+  .max(256, {
+    message: 'Password must be at most 256 characters long',
+  }),
+});
+
+export type ValidateResetTokenSchema = z.infer<typeof validateResetTokenSchema>;
