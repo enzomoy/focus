@@ -15,12 +15,16 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { MailerService } from 'src/mailer/mailer.service';
 import { ZodValidationPipe } from 'src/pipes/zod.pipe';
 import { AuthService } from './auth.service';
 
 @Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly mailerService: MailerService,
+  ) {}
 
   @Post('register')
   @UsePipes(new ZodValidationPipe(registerSchema))
@@ -61,6 +65,6 @@ export class AuthController {
 
   @Post('request-password-reset')
   async requestPasswordReset(@Body() data: { email: string }) {
-    return this.authService.requestPasswordReset(data.email);
+    return this.mailerService.testSendMail(data.email);
   }
 }
