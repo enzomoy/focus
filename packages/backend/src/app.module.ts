@@ -6,9 +6,10 @@ import { DatabaseModule } from './database/database.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { UserModule } from './user/user.module';
 import { TaskModule } from './task/task.module';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
-  imports: [AuthModule, DatabaseModule, UserModule, TaskModule],
+  imports: [AuthModule, DatabaseModule, UserModule, TaskModule, MailerModule],
   controllers: [AppController],
   providers: [AppService],
 })

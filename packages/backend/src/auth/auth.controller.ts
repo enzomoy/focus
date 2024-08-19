@@ -15,12 +15,20 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { MailerService } from 'src/mailer/mailer.service';
 import { ZodValidationPipe } from 'src/pipes/zod.pipe';
 import { AuthService } from './auth.service';
+import {
+  ValidateResetTokenSchema,
+  validateResetTokenSchema,
+} from '@common/validations/resetpwd-schema';
 
 @Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly mailerService: MailerService,
+  ) {}
 
   @Post('register')
   @UsePipes(new ZodValidationPipe(registerSchema))
@@ -57,5 +65,21 @@ export class AuthController {
   logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('focus_token');
     return { success: true, message: 'User logged out successfully' };
+  }
+
+  @Post('request-password-reset')
+  async requestPasswordReset(@Body() data: { email: string }) {
+    return this.mailerService.sendResetMail(data.email);
+  }
+
+  @Post('validate-reset-token')
+  async validateResetToken(@Body('token') token: string) {
+    return this.authService.validateResetToken(token);
+  }
+
+  @Post('reset-password')
+  @UsePipes(new ZodValidationPipe(validateResetTokenSchema))
+  async resetPassword(@Body() data: ValidateResetTokenSchema) {
+    return this.authService.resetPassword(data);
   }
 }
