@@ -6,6 +6,7 @@ import * as crypto from 'crypto';
 import { sign } from 'jsonwebtoken';
 import { User } from 'src/models/User';
 import { Repository } from 'typeorm';
+import { verify } from 'jsonwebtoken';
 
 type JwtPayload = {
   id: number;
@@ -83,16 +84,19 @@ export class AuthService {
     };
   }
 
-  async requestPasswordReset(email: string) {
-    if (!email) {
-      throw new BadRequestError('Email is required');
-    }
+  async validateResetToken(token: string) {
+    try {
+      const payload = verify(token, process.env.JWT_SECRET) as JwtPayload;
 
-    // Create the logic to send a password reset email
-    return {
-      success: true,
-      message: `Password reset email sent to ${email}`,
-    };
+      return {
+        isValid: true,
+        payload,
+      };
+    } catch (error) {
+      return {
+        isValid: false,
+      };
+    }
   }
 
   private generateSalt() {

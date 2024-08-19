@@ -16,7 +16,7 @@ export class MailerService {
 
   private secret = process.env.JWT_SECRET;
 
-  async testSendMail(email: string) {
+  async sendResetMail(email: string) {
     if (!email) {
       throw new BadRequestError('Email is required');
     }
@@ -37,7 +37,7 @@ export class MailerService {
       template: 'reset-password',
       context: {
         name: user.username,
-        resetLink: 'http://localhost:3000/reset-password?token=' + token,
+        resetLink: 'http://localhost:8080/reset-password?token=' + token,
       },
     });
 
