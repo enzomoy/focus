@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+
 import * as RechartsPrimitive from "recharts"
 
 import { cn } from "@/lib/utils"
@@ -116,7 +117,13 @@ interface ChartTooltipContentProps extends React.ComponentProps<"div"> {
   label?: unknown
   labelFormatter?: (value: unknown, payload: unknown[]) => React.ReactNode
   labelClassName?: string
-  formatter?: (value: unknown, name: string, props: unknown, index: number, payload: unknown) => React.ReactNode
+  formatter?: (
+    value: unknown,
+    name: string,
+    props: unknown,
+    index: number,
+    payload: unknown
+  ) => React.ReactNode
   hideLabel?: boolean
   hideIndicator?: boolean
   indicator?: "line" | "dot" | "dashed"
@@ -248,7 +255,9 @@ function ChartTooltipContent({
                     </div>
                     {item.value != null && (
                       <span className="text-foreground font-mono font-medium tabular-nums">
-                        {typeof item.value === 'number' ? item.value.toLocaleString() : String(item.value)}
+                        {typeof item.value === "number"
+                          ? item.value.toLocaleString()
+                          : String(item.value)}
                       </span>
                     )}
                   </div>

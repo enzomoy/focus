@@ -1,10 +1,10 @@
-import type { NextConfig } from 'next'
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-    output: 'standalone',
-    images: {
-        domains: [],
-    },
+  output: "standalone",
+  images: {
+    domains: [],
+  },
 }
 
 export default nextConfig
