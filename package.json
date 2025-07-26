@@ -13,7 +13,17 @@
     "check": "npm run lint && npm run format:check",
     "docker:dev": "docker-compose -f docker-compose.local.yml up",
     "docker:build": "docker build -t focus-app .",
-    "docker:prod": "docker build -t focus-app --target production ."
+    "docker:prod": "docker build -t focus-app --target production .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.0",
@@ -52,6 +62,8 @@
     "clsx": "2.1.1",
     "eslint": "9.32.0",
     "eslint-config-next": "15.4.4",
+    "husky": "9.1.7",
+    "lint-staged": "16.1.2",
     "prettier": "3.6.2",
     "prettier-plugin-tailwindcss": "0.6.14",
     "tailwind-merge": "3.3.1",

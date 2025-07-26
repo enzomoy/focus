@@ -1,0 +1,6 @@
+# Run lint-staged for incremental checks
+bunx lint-staged
+
+# Run type check on the entire project
+echo "🔍 Running TypeScript type check..."
+bunx tsc --noEmit

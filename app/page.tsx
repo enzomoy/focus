@@ -1,4 +1,6 @@
 export default function Home() {
+  const hello = "Hello, World!"
+
   return (
     <div className="min-h-screen p-8">
       <main className="mx-auto max-w-4xl">
@@ -16,4 +18,3 @@ export default function Home() {
     </div>
   )
 }
-// Test commit
