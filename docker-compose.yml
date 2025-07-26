@@ -2,15 +2,12 @@ version: '3.8'
 
 services:
   app:
-    build:
-      context: .
-      target: development
+    image: ghcr.io/enzomoy/focus:latest
+    container_name: focus-app
+    restart: unless-stopped
     ports:
-      - "3000:3000"
-    volumes:
-      - .:/app
-      - /app/node_modules
+      - "3333:3000"
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
     env_file:
-      - .env.local
+      - .env.production
