@@ -3,7 +3,7 @@ import { Timestamp } from "firebase/firestore"
 export interface User {
   id: string
   email: string
-  displayName?: string
+  displayName: string
   createdAt: Timestamp
 }
 
