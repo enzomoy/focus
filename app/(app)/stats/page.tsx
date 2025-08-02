@@ -2,6 +2,8 @@
 
 import { AuthGuard } from "@/components/auth/auth-guard"
 
+export const dynamic = "force-dynamic"
+
 function StatsContent() {
   return (
     <div className="min-h-screen p-8">

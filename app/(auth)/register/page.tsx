@@ -23,6 +23,8 @@ import { useAuth } from "@/hooks/use-auth"
 import { getAuthErrorMessage } from "@/lib/auth"
 import { type RegisterFormData, registerFormSchema } from "@/types/schemas/auth"
 
+export const dynamic = "force-dynamic"
+
 type RegisterFormValues = RegisterFormData
 
 function RegisterForm() {

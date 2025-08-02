@@ -25,6 +25,8 @@ import {
   resetPasswordSchema,
 } from "@/types/schemas/auth"
 
+export const dynamic = "force-dynamic"
+
 type ResetPasswordFormValues = ResetPasswordFormData
 
 function ForgotPasswordForm() {

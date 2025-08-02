@@ -6,6 +6,8 @@ import { AuthGuard } from "@/components/auth/auth-guard"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
 
+export const dynamic = "force-dynamic"
+
 function HomeContent() {
   const { user, logout } = useAuth()
 
