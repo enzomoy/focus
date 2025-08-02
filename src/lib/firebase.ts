@@ -1,7 +1,7 @@
-import { getApps, initializeApp } from "firebase/app"
-import { getAuth } from "firebase/auth"
-import { getFirestore } from "firebase/firestore"
-import { getStorage } from "firebase/storage"
+import { type FirebaseApp, getApps, initializeApp } from "firebase/app"
+import { type Auth, getAuth } from "firebase/auth"
+import { type Firestore, getFirestore } from "firebase/firestore"
+import { type FirebaseStorage, getStorage } from "firebase/storage"
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,9 +12,17 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
-const app =
-  getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
+// N'initialise Firebase que si les variables d'environnement existent
+let app: FirebaseApp | null = null
+let auth: Auth | null = null
+let db: Firestore | null = null
+let storage: FirebaseStorage | null = null
 
-export const auth = getAuth(app)
-export const db = getFirestore(app)
-export const storage = getStorage(app)
+if (process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
+  auth = getAuth(app)
+  db = getFirestore(app)
+  storage = getStorage(app)
+}
+
+export { auth, db, storage }

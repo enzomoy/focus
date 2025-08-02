@@ -23,10 +23,12 @@ export class AuthService {
     password,
     displayName,
   }: RegisterData): Promise<AppUser> {
+    if (!auth || !db) throw new Error("Firebase not initialized")
+
     return retryWithBackoff(async () => {
       try {
         const userCredential: UserCredential =
-          await createUserWithEmailAndPassword(auth, email, password)
+          await createUserWithEmailAndPassword(auth!, email, password)
 
         const user = userCredential.user
         const userData: AppUser = {
@@ -36,7 +38,7 @@ export class AuthService {
           createdAt: Timestamp.now(),
         }
 
-        await setDoc(doc(db, "users", user.uid), userData)
+        await setDoc(doc(db!, "users", user.uid), userData)
 
         return userData
       } catch (error: unknown) {
@@ -50,16 +52,18 @@ export class AuthService {
   }
 
   static async login({ email, password }: LoginData): Promise<AppUser> {
+    if (!auth || !db) throw new Error("Firebase not initialized")
+
     return retryWithBackoff(async () => {
       try {
         const userCredential: UserCredential = await signInWithEmailAndPassword(
-          auth,
+          auth!,
           email,
           password
         )
 
         const user = userCredential.user
-        const userDoc = await getDoc(doc(db, "users", user.uid))
+        const userDoc = await getDoc(doc(db!, "users", user.uid))
 
         if (!userDoc.exists()) {
           const userData: AppUser = {
@@ -68,7 +72,7 @@ export class AuthService {
             displayName: user.displayName || "Utilisateur",
             createdAt: Timestamp.now(),
           }
-          await setDoc(doc(db, "users", user.uid), userData)
+          await setDoc(doc(db!, "users", user.uid), userData)
           return userData
         }
 
@@ -84,8 +88,10 @@ export class AuthService {
   }
 
   static async logout(): Promise<void> {
+    if (!auth) throw new Error("Firebase not initialized")
+
     try {
-      await signOut(auth)
+      await signOut(auth!)
     } catch (error: unknown) {
       const firebaseError = error as { code?: string; message?: string }
       throw {
@@ -96,11 +102,12 @@ export class AuthService {
   }
 
   static async getCurrentUser(): Promise<AppUser | null> {
+    if (!auth || !db) return null
     const firebaseUser = auth.currentUser
     if (!firebaseUser) return null
 
     try {
-      const userDoc = await getDoc(doc(db, "users", firebaseUser.uid))
+      const userDoc = await getDoc(doc(db!, "users", firebaseUser.uid))
 
       if (!userDoc.exists()) {
         const userData: AppUser = {
@@ -109,7 +116,7 @@ export class AuthService {
           displayName: firebaseUser.displayName || "Utilisateur",
           createdAt: Timestamp.now(),
         }
-        await setDoc(doc(db, "users", firebaseUser.uid), userData)
+        await setDoc(doc(db!, "users", firebaseUser.uid), userData)
         return userData
       }
 
@@ -120,9 +127,11 @@ export class AuthService {
   }
 
   static async resetPassword({ email }: ResetPasswordData): Promise<void> {
+    if (!auth) throw new Error("Firebase not initialized")
+
     return retryWithBackoff(async () => {
       try {
-        await sendPasswordResetEmail(auth, email)
+        await sendPasswordResetEmail(auth!, email)
       } catch (error: unknown) {
         const firebaseError = error as { code?: string; message?: string }
         throw {
