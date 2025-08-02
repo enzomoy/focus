@@ -3,7 +3,6 @@
 import { useState } from "react"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -21,31 +20,36 @@ import {
 import { Input } from "@/components/ui/input"
 import { useAuth } from "@/hooks/use-auth"
 import { getAuthErrorMessage } from "@/lib/auth"
-import { type LoginFormData, loginSchema } from "@/types/schemas/auth"
+import {
+  type ResetPasswordFormData,
+  resetPasswordSchema,
+} from "@/types/schemas/auth"
 
-type LoginFormValues = LoginFormData
+type ResetPasswordFormValues = ResetPasswordFormData
 
-function LoginForm() {
+function ForgotPasswordForm() {
   const [error, setError] = useState<string>("")
+  const [success, setSuccess] = useState<string>("")
   const [isLoading, setIsLoading] = useState(false)
-  const { login } = useAuth()
-  const router = useRouter()
+  const { resetPassword } = useAuth()
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<ResetPasswordFormValues>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   })
 
-  const onSubmit = async (values: LoginFormValues) => {
+  const onSubmit = async (values: ResetPasswordFormValues) => {
     try {
       setIsLoading(true)
       setError("")
+      setSuccess("")
 
-      await login(values.email, values.password)
-      router.push("/")
+      await resetPassword(values.email)
+      setSuccess(
+        "Un email de réinitialisation a été envoyé à votre adresse email."
+      )
     } catch (error: unknown) {
       const firebaseError = error as { code?: string }
       setError(
@@ -63,16 +67,10 @@ function LoginForm() {
       <div className="w-full max-w-md space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Connexion
+            Mot de passe oublié
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Ou{" "}
-            <Link
-              href="/register"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
-            >
-              créez un nouveau compte
-            </Link>
+            Entrez votre email pour recevoir un lien de réinitialisation
           </p>
         </div>
 
@@ -103,33 +101,17 @@ function LoginForm() {
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="password">Mot de passe</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        id="password"
-                        type="password"
-                        autoComplete="current-password"
-                        required
-                        className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none sm:text-sm"
-                        placeholder="Votre mot de passe"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
             {error && (
               <div className="rounded border border-red-200 bg-red-50 px-4 py-3 text-red-600">
                 {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="rounded border border-green-200 bg-green-50 px-4 py-3 text-green-600">
+                {success}
               </div>
             )}
 
@@ -139,16 +121,16 @@ function LoginForm() {
                 disabled={isLoading}
                 className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
               >
-                {isLoading ? "Connexion..." : "Se connecter"}
+                {isLoading ? "Envoi..." : "Envoyer le lien"}
               </Button>
             </div>
 
             <div className="text-center">
               <Link
-                href="/forgot-password"
+                href="/login"
                 className="font-medium text-indigo-600 hover:text-indigo-500"
               >
-                Mot de passe oublié ?
+                Retour à la connexion
               </Link>
             </div>
           </form>
@@ -158,10 +140,10 @@ function LoginForm() {
   )
 }
 
-export default function LoginPage() {
+export default function ForgotPasswordPage() {
   return (
     <AuthGuard requireAuth={false} redirectTo="/">
-      <LoginForm />
+      <ForgotPasswordForm />
     </AuthGuard>
   )
 }

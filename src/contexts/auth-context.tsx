@@ -19,6 +19,7 @@ interface AuthContextType {
     displayName: string
   ) => Promise<void>
   logout: () => Promise<void>
+  resetPassword: (email: string) => Promise<void>
 }
 
 interface AuthProviderProps {
@@ -96,6 +97,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  const resetPassword = async (email: string): Promise<void> => {
+    try {
+      await AuthService.resetPassword({ email })
+    } catch (error) {
+      throw error
+    }
+  }
+
   const value: AuthContextType = {
     user,
     firebaseUser,
@@ -103,6 +112,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     login,
     register,
     logout,
+    resetPassword,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

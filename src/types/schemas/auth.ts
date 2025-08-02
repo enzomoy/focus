@@ -1,12 +1,12 @@
 import { z } from "zod"
 
 export const loginSchema = z.object({
-  email: z.string().email("Email invalide"),
+  email: z.email("Email invalide"),
   password: z.string().min(1, "Mot de passe requis"),
 })
 
 export const registerSchema = z.object({
-  email: z.string().email("Email invalide"),
+  email: z.email("Email invalide"),
   password: z
     .string()
     .min(6, "Le mot de passe doit contenir au moins 6 caractères"),
@@ -22,6 +22,11 @@ export const registerFormSchema = registerSchema
     path: ["confirmPassword"],
   })
 
+export const resetPasswordSchema = z.object({
+  email: z.email("Email invalide"),
+})
+
 export type LoginFormData = z.infer<typeof loginSchema>
 export type RegisterFormData = z.infer<typeof registerFormSchema>
 export type RegisterApiData = z.infer<typeof registerSchema>
+export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>

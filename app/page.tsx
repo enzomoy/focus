@@ -2,11 +2,12 @@
 
 import Link from "next/link"
 
+import { AuthGuard } from "@/components/auth/auth-guard"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
 
-export default function Home() {
-  const { user, logout, loading } = useAuth()
+function HomeContent() {
+  const { user, logout } = useAuth()
 
   const handleLogout = async () => {
     try {
@@ -14,14 +15,6 @@ export default function Home() {
     } catch (error) {
       console.error("Erreur lors de la déconnexion:", error)
     }
-  }
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
-      </div>
-    )
   }
 
   return (
@@ -32,34 +25,21 @@ export default function Home() {
           <h1 className="text-4xl font-bold">Focus Timer</h1>
 
           <div className="flex items-center gap-4">
-            {user ? (
-              <>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                  <span className="text-sm text-gray-600">
-                    Connecté en tant que {user.displayName || user.email}
-                  </span>
-                </div>
-                <Button onClick={handleLogout} variant="outline" size="sm">
-                  Se déconnecter
-                </Button>
-              </>
-            ) : (
-              <>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-red-500"></div>
-                  <span className="text-sm text-gray-600">Non connecté</span>
-                </div>
-                <div className="flex gap-2">
-                  <Button asChild variant="outline" size="sm">
-                    <Link href="/login">Se connecter</Link>
-                  </Button>
-                  <Button asChild size="sm">
-                    <Link href="/register">S&apos;inscrire</Link>
-                  </Button>
-                </div>
-              </>
-            )}
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-green-500"></div>
+              <span className="text-sm text-gray-600">
+                Connecté en tant que {user?.displayName || user?.email}
+              </span>
+            </div>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/settings">Paramètres</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/stats">Statistiques</Link>
+            </Button>
+            <Button onClick={handleLogout} variant="outline" size="sm">
+              Se déconnecter
+            </Button>
           </div>
         </div>
 
@@ -75,5 +55,13 @@ export default function Home() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function Home() {
+  return (
+    <AuthGuard requireAuth={true} redirectTo="/login">
+      <HomeContent />
+    </AuthGuard>
   )
 }
